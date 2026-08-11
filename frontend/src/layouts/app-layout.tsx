@@ -2,11 +2,12 @@ import AppWrapper from "@/components/app-wrapper";
 import { Outlet } from "react-router-dom";
 
 const AppLayout = () => {
-
     return (
         <AppWrapper>
             <div className="h-full">
-                <div>
+                {/* ChatList */}
+                <div
+                >
                     <Outlet />
                 </div>
             </div>
