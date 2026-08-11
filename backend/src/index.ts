@@ -10,12 +10,15 @@ import { HTTPSTATUS } from "./config/http.config";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
 import connectDatabase from "./config/database.config";
 import routes from "./routes";
+import { initializeSocket } from "./lib/socket";
 
 import "./config/passport.config";
 
 const app = express();
 const server = http.createServer(app);
 
+//socket
+initializeSocket(server);
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());

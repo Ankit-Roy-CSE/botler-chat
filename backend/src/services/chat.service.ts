@@ -1,3 +1,4 @@
+import { emitNewChatToParticpants } from "../lib/socket";
 import ChatModel from "../models/chat.model";
 import MessageModel from "../models/message.model";
 import UserModel from "../models/user.model";
@@ -78,6 +79,9 @@ export const createChatService = async (
     const participantIdStrings = populatedChat?.participants?.map((p) => {
         return p._id?.toString();
     });
+
+    // Notify connected participants via Socket.io
+    emitNewChatToParticpants(participantIdStrings, populatedChat);
 
     return chat;
 };

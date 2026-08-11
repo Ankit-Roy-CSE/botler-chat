@@ -4,6 +4,9 @@ import ChatModel from "../models/chat.model";
 import MessageModel from "../models/message.model";
 import { BadRequestException, NotFoundException } from "../utils/app-error";
 import UserModel from "../models/user.model";
+import {
+    emitLastMessageToParticipants, emitNewMessageToChatRoom
+} from "../lib/socket";
 
 /**
  * Service to handle sending a new message within a chat room.
@@ -84,8 +87,11 @@ export const sendMessageService = async (
     await chat.save();
 
     // Broadcast the new message event to all connected sockets in the chat room
+    emitNewMessageToChatRoom(userId, chatId, newMessage);
 
     // Broadcast last message preview update to all participant personal channels
+    const allParticipantIds = chat.participants.map((id) => id.toString());
+    emitLastMessageToParticipants(allParticipantIds, chatId, newMessage);
 
     return {
         userMessage: newMessage,
