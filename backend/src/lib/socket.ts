@@ -46,8 +46,18 @@ export const initializeSocket = (httpServer: HTTPServer) => {
 
             if (!rawCookie) return next(new Error("Unauthorized"));
 
-            // Extract access token value from raw cookie string
-            const token = rawCookie?.split("=")?.[1]?.trim();
+            // Parse cookies properly: split on "; " first, then split each
+            // pair on the FIRST "=" only (JWT values themselves contain "=" padding)
+            const cookies: Record<string, string> = {};
+            for (const part of rawCookie.split("; ")) {
+                const eqIdx = part.indexOf("=");
+                if (eqIdx === -1) continue;
+                const key = part.slice(0, eqIdx).trim();
+                const value = part.slice(eqIdx + 1).trim();
+                cookies[key] = value;
+            }
+
+            const token = cookies["accessToken"];
             if (!token) return next(new Error("Unauthorized"));
 
             // Verify token signature and extract user payload
